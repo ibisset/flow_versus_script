@@ -28,6 +28,27 @@ Ignoring the above reasons, since this was being triggered by a UI Action button
 | Flowwwww Designer    | 2,752.15           | Baseline             | –                       | 260                 |  100                |
 | Scripty McScriptFace | ***30.95***        | ***98.88% faster***  | ***88.92 times faster***|   0                 |    0                |
 
+
+```mermaid
+lineChart
+    title Revenue vs Target (2025)
+    x-axis ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul"]
+    y-axis Revenue $0 --> $1200
+    line Actual #e74c3c: 320, 480, 590, 710, 680, 940, 1100
+    line Target #27ae60: 400, 450, 520, 600, 650, 800, 900
+```
+```mermaid
+%%{init: {'theme':'base', 'themeVariables': { 'primaryColor': '#e74c3c' }}}%%
+xychart-beta
+    title "Revenue vs Target (2025)"
+    x-axis ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul"]
+    y-axis "Revenue $" 0 --> 1200
+    bar [320, 480, 590, 710, 680, 940, 1100]
+    line [400, 450, 520, 600, 650, 800, 900]
+    bar "Actual"
+    line "Target"
+```
+
 **Conclusion:** Making RESTMessage call in scripts is **88.92 times faster** than using Flow Designer (2,721.2 ms faster per call).
 
 **Other advantages of using scripting over flow designer**
