@@ -1,15 +1,16 @@
-### Flow Designer versus Scripting RESTMessage performance
+### Flow Designer versus Scripting - RESTMessage performance
 
 #### Scenario
 Some of our existing ServiceNow outbound REST calls were being made through a Flow Designer action, using an imported RestMessage using OAuth (typical OAuth Application Registry and OAuth Profiles).
-This was initially set up since our /oauth/token endpoints were internal and not on the internet and hence had to go through a MID server to access the token endpoint. 
+This was initially set up since our /oauth/token endpoints were internal and not on the internet and hence had to go through a MID server to access the token endpoint and the REST step in Flow Designer supports that.
+
 Ignoring the above reasons, since this was being triggered by a UI Action button, from a user experience perspective, there was a noticeable delay in calling and running the Flow Designer action. I decided to investigate, from a raw performance perspective, how much faster it would be to use a script instead of a Flow Designer action with a typical REST step.
 
 #### Test Conditions
 
 - **Environment**: ServiceNow, Yokohama glide-yokohama-12-18-2024__patch7-hotfix2a-09-24-2025
-- **REST mechanism**: Standard Rest Message with a POST method. OAuth authorization through internal /oauth/token endpoint 
-- **Dataset**: Random Solr queries to a SOLAR endpoint (to minimize any caching server side)
+- **REST mechanism**: Standard ServiceNow Rest Message with a POST method. OAuth authorization through internal /oauth/token endpoint 
+- **REST endpoint**: Random Solr queries to a SOLAR endpoint (to minimize any caching server side)
 - **Iterations**: 20 runs, average and relative performance reported
 - **Measurement**: *Flow Designer* - Before and after calling the Flow Designer action. *Scripting* Before and after calling the script include.
 
@@ -60,14 +61,25 @@ Ignoring the above reasons, since this was being triggered by a UI Action button
         this.needMidServer = (endpoint && endpoint.toLowerCase().indexOf('intranet') !== -1);
         if (this.needMidServer) {
             // Go through a midserver for your call if you need it
-			this.midServer = midServer || new sn_auth.OAuthMidSelector().selectRESTCapableMidServer('all', null);
-			this.restMessage.setMIDServer(this.midServer);
+            this.midServer = midServer || new sn_auth.OAuthMidSelector().selectRESTCapableMidServer('all', null);
+            this.restMessage.setMIDServer(this.midServer);
         }
         this.restMessage.setRequestHeader('Authorization', 'Bearer ' + this._getAccessToken(requestorId, entityProfile));
         // Use the existing Rest Message but make sure the authentication is only set by the above
         this.restMessage.setAuthenticationProfile("no_authentication");
 
     },
+    /**SNDOC
+        @name _getAccessToken
+        @description 
+            Gets an OAuth client credentials access token. 
+            Support OAuth token endpoints through a MID server
+     
+        @param {String} [requestorId] - Id of the requestor
+        @param {String} [entityProfile] - Id of the entity profile     
+
+        @returns {String} OAuth access token
+        */    
      _getAccessToken: function(requestorId, entityProfile) {
         let oAuthClient = new sn_auth.GlideOAuthClient();
         // Get the token. It's cached usually
@@ -89,10 +101,34 @@ Ignoring the above reasons, since this was being triggered by a UI Action button
             token = tokenResponse.getToken();
         }
         return token.getAccessToken();
-    },
+    },    
+    /**SNDOC
+        @name invokeRestMessage
+        @description Sends in a payload to the Rest Message, executes it and returns the response
+    
+        @param {String} [payload] - Any payload
+
+        @returns {RESTResponse} Leave it up to the caller to do whatever with the response
+    */
     invokeRestMessage: function(payload) {
         // Set the message body (could be JSON or XML or text)
         this.restMessage.setRequestBody(payload);
 
         return this.restMessage.execute();
-    }
+    },
+    /**SNDOC
+        @name invokeRestMessageAsync
+        @description 
+        Sends in a payload to the Rest Message, executes it and returns the response
+        Uses the ECC queue, which is useful for Retry purposes as it supports ECC Retry Policies
+        Note that the way this works is that the first try of the REST call to executeAsync 
+        returns a proper response. If there's a failure and it matches is a Retry Policy, it will retry and you'll have to
+        intercept the response on the ecc_queue (maybe. a business rule)
+        @returns {RESTResponse} Leave it up to the caller to do whatever with the first response
+        */   
+    invokeRestMessageAsync: function(payload) {
+        // Set the message body (could be JSON or XML or text)
+        this.restMessage.setRequestBody(payload);
+
+        return this.restMessage.executeAsync();
+    },
