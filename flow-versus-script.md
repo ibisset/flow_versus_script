@@ -1,0 +1,98 @@
+### Flow Designer versus Scripting RESTMessage performance
+
+#### Scenario
+Some of our existing ServiceNow outbound REST calls were being made through a Flow Designer action, using an imported RestMessage using OAuth (typical OAuth Application Registry and OAuth Profiles).
+This was initially set up since our /oauth/token endpoints were internal and not on the internet and hence had to go through a MID server to access the token endpoint. 
+Ignoring the above reasons, since this was being triggered by a UI Action button, from a user experience perspective, there was a noticeable delay in calling and running the Flow Designer action. I decided to investigate, from a raw performance perspective, how much faster it would be to use a script instead of a Flow Designer action with a typical REST step.
+
+#### Test Conditions
+
+- **Environment**: ServiceNow, Yokohama glide-yokohama-12-18-2024__patch7-hotfix2a-09-24-2025
+- **REST mechanism**: Standard Rest Message with a POST method. OAuth authorization through internal /oauth/token endpoint 
+- **Dataset**: Random Solr queries to a SOLAR endpoint (to minimize any caching server side)
+- **Iterations**: 20 runs, average and relative performance reported
+- **Measurement**: *Flow Designer* - Before and after calling the Flow Designer action. *Scripting* Before and after calling the script include.
+
+
+#### The fight is on!
+**In the <span style="color:red">RED</span> corner**, hailing from the sleepy hamlet of Sloth Hollow, in the sovereign state of Molassissippi, weighing in at a bloated 1 subflow and a pipedream… the heavyweight king of visual bloat… FLOOOOOOW DESIGNERRRRR!
+
+**In the <span style="color:blue">BLUE</span> corner**, the lean, mean fighting machine, coming to us from RapidREST Ranch, in the great state of MinneSoFast, undefeated since 1995… still under 40ms… give it up for SCRIPTY MCSCRIPTFACE!
+
+
+#### Performance Comparison
+
+| Approach             | Average time (ms)  | Relative speed       | Speedup - Times faster  | Inserts (sys_flow*) | Updates (sys_flow*) |
+|----------------------|--------------------|----------------------|-------------------------|---------------------|---------------------|
+| Flowwwww Designer    | 2,752.15           | Baseline             | –                       | 260                 |  100                |
+| Scripty McScriptFace | ***30.95***        | ***98.88% faster***  | ***88.92 times faster***|   0                 |    0                |
+
+**Conclusion:** Making RESTMessage call in scripts is **88.92 times faster** than using Flow Designer (2,721.2 ms faster per call).
+
+**Other advantages of using scripting over flow designer**
+- Much higher throughput and much improved scaleability
+- **You don't have to use flow designer**
+- No overhead of flow engine workers, logging, instances, unnecessary inserts and updates (see above)
+- More predictable and reliable executions
+- **You don't have to use flow designer**
+- Easier debugging and logging control
+- Easier to control and optimize REST Message calls
+- **You don't have to use flow designer**
+- Reusable script includes across all applications
+- Easy integration with scoped apps and ATF for testing 
+
+#### Script Include and RestMessagev2
+```javascript
+    initialize: function(restMessage, restMessageMethod, requestorId, entityProfile, midServer) {
+        // Normalize restMessage to always be a sn_ws.RESTMessageV2 object
+        if (typeof restMessage == 'string') {
+            // Maintain existing API
+            this.restMessage = new sn_ws.RESTMessageV2(restMessage, restMessageMethod);
+        } else if (restMessage instanceof sn_ws.RESTMessageV2) {
+            // Support anyone passing in an already constructed RESTMessagev2
+            this.restMessage = restMessage;
+        } else {
+            throw 'First argument must be either a REST Message name (string) or a sn_ws.RESTMessageV2 object';
+        }        
+        // Handle mid server or non-mid server
+        let endpoint = this.restMessage.getEndpoint();
+        // Change this to however you want to determine whether to go through a midserver for tokens and calls
+        this.needMidServer = (endpoint && endpoint.toLowerCase().indexOf('intranet') !== -1);
+        if (this.needMidServer) {
+            // Go through a midserver for your call if you need it
+			this.midServer = midServer || new sn_auth.OAuthMidSelector().selectRESTCapableMidServer('all', null);
+			this.restMessage.setMIDServer(this.midServer);
+        }
+        this.restMessage.setRequestHeader('Authorization', 'Bearer ' + this._getAccessToken(requestorId, entityProfile));
+        // Use the existing Rest Message but make sure the authentication is only set by the above
+        this.restMessage.setAuthenticationProfile("no_authentication");
+
+    },
+     _getAccessToken: function(requestorId, entityProfile) {
+        let oAuthClient = new sn_auth.GlideOAuthClient();
+        // Get the token. It's cached usually
+        let token = oAuthClient.getToken(requestorId, entityProfile);
+        // Choose whatever you want for expiration
+        if (token.getExpiresIn() < 60) {
+            // Use this API to get a new access token
+            let tokenRequest = new sn_auth.GlideOAuthClientRequest();
+            tokenRequest.setParameter('oauth_requestor_context', 'rest');
+            tokenRequest.setParameter('oauth_requestor', requestorId);
+            tokenRequest.setParameter('oauth_provider_profile', entityProfile);
+            // This is the code that is needed to go through
+            // a midserver for internal /oauth/token endpoints
+            if (this.needMidServer) {
+                // Need this otherwise it can't go through Mid Server
+                tokenRequest.setMIDServer(this.midServer);
+            }
+            let tokenResponse = oAuthClient.requestTokenByRequest(null, tokenRequest);
+            token = tokenResponse.getToken();
+        }
+        return token.getAccessToken();
+    },
+    invokeRestMessage: function(payload) {
+        // Set the message body (could be JSON or XML or text)
+        this.restMessage.setRequestBody(payload);
+
+        return this.restMessage.execute();
+    }
