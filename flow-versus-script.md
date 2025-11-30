@@ -16,17 +16,17 @@ Ignoring the above reasons, since this was being triggered by a UI Action button
 
 
 ### The fight is on!
-**In the <span style="color: #d73a49;">RED</span> corner**, hailing from the sleepy hamlet of Sloth Hollow, in the sovereign state of Molassissippi, weighing in at a bloated 1 subflow and a pipedream… the heavyweight king of visual bloat… FLOOOOOOW DESIGNERRRRR!
+**In the <span style="color:#d73a49;">RED</span> corner**, hailing from the sleepy hamlet of Sloth Hollow, in the sovereign state of Molassissippi, weighing in at a bloated 1 subflow and a pipedream… the heavyweight king of visual bloat… FLOOOOOOW DESIGNERRRRR!
 
-**In the <span style="color: #0366d6;">BLUE</span> corner**, the lean, mean fighting machine, coming to us from RapidREST Ranch, in the great state of MinneSoFast, undefeated since 1995… still under 40ms… give it up for SCRIPTY MCSCRIPTFACE!
+**In the <span style="color:#0366d6;">BLUE</span> corner**, the lean, mean fighting machine, coming to us from RapidREST Ranch, in the great state of MinneSoFast, undefeated since 1995… still under 40ms… give it up for SCRIPTY MCSCRIPTFACE!
 
 
 ### Performance Comparison
 
 | Approach             | Average time (ms)  | Relative speed       | Speedup - Times faster  | Inserts (sys_flow*) | Updates (sys_flow*) |
 |----------------------|--------------------|----------------------|-------------------------|---------------------|---------------------|
-| <span style="color: #d73a49;">Flowwwww Designer</span>    | 2,752.15           | Baseline             | –                       | 260                 |  100                |
-| <span style="color: #0366d6;">Scripty McScriptFace</span> | ***30.95***        | ***98.88% faster***  | ***88.92 times faster***|   0                 |    0                |
+| <span style="color:#d73a49;">Flowwwww Designer</span>    | 2,752.15           | Baseline             | –                       | 260                 |  100                |
+| <span style="color:#0366d6;">Scripty McScriptFace</span> | ***30.95***        | ***98.88% faster***  | ***88.92 times faster***|   0                 |    0                |
 
 
 
@@ -65,10 +65,7 @@ xychart-beta
 - **You don't have to use flow designer**
 - Reusable script includes across all applications
 - Easy integration with scoped apps and ATF for testing 
-- <span style="color:#28a745;">Success</span> Production deploy completed  
-- <span style="color:#d73a49;">Failed</span> Staging tests failed (see log)  
-- <span style="color:#e36209;">Warning</span> Tableau extract is 18h old  
-- <span style="color:#0366d6;">Info</span> Dashboard link: [Open Dashboard](https://your-uni.tableau.com/...)
+
 
 ### Script Include and RestMessagev2
 ```javascript
