@@ -157,4 +157,65 @@ Making RESTMessage calls in scripts is **88.92 times faster** than using Flow De
         this.restMessage.setRequestBody(payload);
 
         return this.restMessage.executeAsync();
-    },
+    }
+```
+### Test Scripts
+```javascript
+const runs = 20;
+
+/**
+ * Script performance check
+ */
+
+let oAuthRestUtil = new myscopedapp.OAuthRestUtil('YourRestMessage', 'YourRestMethod', requestorId, entityProfile);
+let totalScriptDuration = 0.0;
+for (count = 0; count < runs; count++) {
+    
+    // Grab a random query
+    randomIndex = Math.floor(Math.random() * queries.length);
+    query = queries[randomIndex];
+
+    let scriptStartTime = new Date().getTime();
+    let response = oAuthRestUtil.invokeRestMessage(query);
+    let scriptEndTime = new Date().getTime();
+    let duration = (scriptEndTime - scriptStartTime);
+    gs.info('Scripted duration :' + duration + ' ms ');
+    totalScriptDuration += duration;
+}
+
+gs.info('----------------------------');
+var scriptAverage = (totalScriptDuration / runs);
+gs.info('Scripting average ' + scriptAverage);
+```
+```javascript
+const runs = 20;
+
+/**
+ * Slow Designer performance check
+ */
+let totalFDDuration = 0.0;
+
+for (count = 0; count < runs; count++) {
+
+    // Grab a random query
+    let randomIndex = Math.floor(Math.random() * queries.length);
+    let query = queries[randomIndex];
+
+    let inputs = {
+        order_query: query
+    };
+    let startTime = new Date().getTime();
+    let result = sn_fd.FlowAPI.getRunner()
+        .action('myRestAction')
+        .inForeground()
+        .withInputs(inputs)
+        .run();
+    let endTime = new Date().getTime();
+    totalFDDuration += (endTime - startTime);
+    gs.info('Flow Designer duration ' + (endTime - startTime) + ' ms');
+
+}
+gs.info('----------------------------');
+let fdAverage = (totalFDDuration / runs);
+gs.info('Flow Designer average ' + fdAverage);
+```
