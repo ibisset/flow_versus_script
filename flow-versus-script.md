@@ -1,7 +1,7 @@
 ### Flow Designer versus Scripting - RESTMessage performance
 
 ### Scenario
-Some of our existing ServiceNow outbound REST calls were being made through a Flow Designer action, using an imported RestMessage using OAuth (typical OAuth Application Registry and OAuth Profiles).
+Some of our existing ServiceNow outbound REST calls were being made through a Flow Designer action, using an imported RestMessage with OAuth authorization (typical OAuth Application Registry and OAuth Profiles).
 This was initially set up since our /oauth/token endpoints were internal and not on the internet and hence had to go through a MID server to access the token endpoint and the REST step in Flow Designer supports that.
 
 Ignoring the above reasons, since this was being triggered by a UI Action button, from a user experience perspective, there was a noticeable delay in calling and running the Flow Designer action. I decided to investigate, from a raw performance perspective, how much faster it would be to use a script instead of a Flow Designer action with a typical REST step.
@@ -25,8 +25,8 @@ Ignoring the above reasons, since this was being triggered by a UI Action button
 
 | Approach             | Average time (ms)  | Relative speed       | Speedup - Times faster  | Inserts (sys_flow*) | Updates (sys_flow*) |
 |----------------------|--------------------|----------------------|-------------------------|---------------------|---------------------|
-| Flowwwww Designer    | 2,752.15           | Baseline             | –                       | 260                 |  100                |
-| Scripty McScriptFace | ***30.95***        | ***98.88% faster***  | ***88.92 times faster***|   0                 |    0                |
+| <span style="color:red">Flowwwww Designer</span>    | 2,752.15           | Baseline             | –                       | 260                 |  100                |
+| <span style="color:blue">Scripty McScriptFace</span> | ***30.95***        | ***98.88% faster***  | ***88.92 times faster***|   0                 |    0                |
 
 
 
