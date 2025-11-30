@@ -52,19 +52,20 @@ xychart-beta
 ```
 
 
-**Conclusion:** Making RESTMessage call in scripts is **88.92 times faster** than using Flow Designer (2,721.2 ms faster per call).
+### Conclusion
+Making RESTMessage calls in scripts is **88.92 times faster** than using Flow Designer (2,721.2 ms faster per call).
 
-**Other advantages of using scripting over flow designer**
-- Much higher throughput and much improved scaleability
-- **You don't have to use flow designer**
+### Other advantages of using scripting over flow designer
+- Much higher **throughput** and much improved **scaleability**
+- **You have zero interaction with Flow Designer**
 - No overhead of flow engine workers, logging, instances, unnecessary inserts and updates (see above)
 - More predictable and reliable executions
-- **You don't have to use flow designer**
+- **You have zero interaction with Flow Designer**
 - Easier debugging and logging control
 - Easier to control and optimize REST Message calls
-- **You don't have to use flow designer**
+- **You have zero interaction with Flow Designer**
 - Reusable script includes across all applications
-- Easy integration with scoped apps and ATF for testing 
+- Easier integration with scoped apps and ATF for testing 
 
 
 ### Script Include and RestMessagev2
