@@ -65,6 +65,10 @@ xychart-beta
 - **You don't have to use flow designer**
 - Reusable script includes across all applications
 - Easy integration with scoped apps and ATF for testing 
+- <span style="color:#28a745;">Success</span> Production deploy completed  
+- <span style="color:#d73a49;">Failed</span> Staging tests failed (see log)  
+- <span style="color:#e36209;">Warning</span> Tableau extract is 18h old  
+- <span style="color:#0366d6;">Info</span> Dashboard link: [Open Dashboard](https://your-uni.tableau.com/...)
 
 ### Script Include and RestMessagev2
 ```javascript
