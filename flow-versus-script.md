@@ -31,14 +31,15 @@ Ignoring the above reasons, since this was being triggered by a UI Action button
 
 
 ```mermaid
-%% Line chart example with multiple series
-line
-    title Quarterly Revenue Growth
-    x-axis Q1, Q2, Q3, Q4
-    y-axis Revenue (in $M)
-    series Product A: 10, 15, 20, 25
-    series Product B: 8, 12, 18, 22
-    series Product C: 5, 10, 15, 20
+%%{init: {'theme':'base', 'themeVariables': { 'primaryColor': '#e74c3c' }}}%%
+xychart-beta
+    title "Revenue vs Target (2025)"
+    x-axis ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul"]
+    y-axis "Revenue $" 0 --> 1200
+    bar [320, 480, 590, 710, 680, 940, 1100]
+    line [400, 450, 520, 600, 650, 800, 900]
+    bar "Actual"
+    line "Target"
 ```
 
 
