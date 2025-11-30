@@ -29,6 +29,13 @@ Ignoring the above reasons, since this was being triggered by a UI Action button
 | Scripty McScriptFace | ***30.95***        | ***98.88% faster***  | ***88.92 times faster***|   0                 |    0                |
 
 
+```mermaid
+pie title Market Share
+    "Product A" : 40
+    "Product B" : 25
+    "Product C" : 35
+```
+
 **Conclusion:** Making RESTMessage call in scripts is **88.92 times faster** than using Flow Designer (2,721.2 ms faster per call).
 
 **Other advantages of using scripting over flow designer**
