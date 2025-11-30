@@ -31,15 +31,24 @@ Ignoring the above reasons, since this was being triggered by a UI Action button
 
 
 ```mermaid
-%%{init: {'theme':'base', 'themeVariables': { 'primaryColor': '#e74c3c' }}}%%
+---
+config:
+    xyChart:
+        width: 900
+        height: 600
+        showDataLabel: true
+    themeVariables:
+        xyChart:
+            plotColorPalette: '#FF0000, #0000FF'
+---
 xychart-beta
-    title "Revenue vs Target (2025)"
-    x-axis ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul"]
-    y-axis "Revenue $" 0 --> 1200
-    bar [320, 480, 590, 710, 680, 940, 1100]
-    line [400, 450, 520, 600, 650, 800, 900]
-    bar "Actual"
-    line "Target"
+    title "Winner's Circle"
+    x-axis "Runs" [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20]
+    y-axis "Run time (ms)" 0 --> 14072
+    %% Red line
+    line [14072,2216,2163,2143,2141,2178,2170,2203,2150,2132,2150,2131,2132,2159,2202,2156,2130,2133,2143,2139]
+    %% Blue line
+    line [355,10,10,10,10,24,23,21,18,11,11,11,10,11,11,11,13,17,16,16]
 ```
 
 
