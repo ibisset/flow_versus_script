@@ -29,12 +29,18 @@ Ignoring the above reasons, since this was being triggered by a UI Action button
 | Scripty McScriptFace | ***30.95***        | ***98.88% faster***  | ***88.92 times faster***|   0                 |    0                |
 
 
+
 ```mermaid
-pie title Market Share
-    "Product A" : 40
-    "Product B" : 25
-    "Product C" : 35
+%% Line chart example with multiple series
+line
+    title Quarterly Revenue Growth
+    x-axis Q1, Q2, Q3, Q4
+    y-axis Revenue (in $M)
+    series Product A: 10, 15, 20, 25
+    series Product B: 8, 12, 18, 22
+    series Product C: 5, 10, 15, 20
 ```
+
 
 **Conclusion:** Making RESTMessage call in scripts is **88.92 times faster** than using Flow Designer (2,721.2 ms faster per call).
 
