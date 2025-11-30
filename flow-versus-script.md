@@ -1,12 +1,12 @@
 ### Flow Designer versus Scripting - RESTMessage performance
 
-#### Scenario
+### Scenario
 Some of our existing ServiceNow outbound REST calls were being made through a Flow Designer action, using an imported RestMessage using OAuth (typical OAuth Application Registry and OAuth Profiles).
 This was initially set up since our /oauth/token endpoints were internal and not on the internet and hence had to go through a MID server to access the token endpoint and the REST step in Flow Designer supports that.
 
 Ignoring the above reasons, since this was being triggered by a UI Action button, from a user experience perspective, there was a noticeable delay in calling and running the Flow Designer action. I decided to investigate, from a raw performance perspective, how much faster it would be to use a script instead of a Flow Designer action with a typical REST step.
 
-#### Test Conditions
+### Test Conditions
 
 - **Environment**: ServiceNow, Yokohama glide-yokohama-12-18-2024__patch7-hotfix2a-09-24-2025
 - **REST mechanism**: Standard ServiceNow Rest Message with a POST method. OAuth authorization through internal /oauth/token endpoint 
@@ -15,13 +15,13 @@ Ignoring the above reasons, since this was being triggered by a UI Action button
 - **Measurement**: *Flow Designer* - Before and after calling the Flow Designer action. *Scripting* Before and after calling the script include.
 
 
-#### The fight is on!
+### The fight is on!
 **In the <span style="color:red">RED</span> corner**, hailing from the sleepy hamlet of Sloth Hollow, in the sovereign state of Molassissippi, weighing in at a bloated 1 subflow and a pipedream… the heavyweight king of visual bloat… FLOOOOOOW DESIGNERRRRR!
 
 **In the <span style="color:blue">BLUE</span> corner**, the lean, mean fighting machine, coming to us from RapidREST Ranch, in the great state of MinneSoFast, undefeated since 1995… still under 40ms… give it up for SCRIPTY MCSCRIPTFACE!
 
 
-#### Performance Comparison
+### Performance Comparison
 
 | Approach             | Average time (ms)  | Relative speed       | Speedup - Times faster  | Inserts (sys_flow*) | Updates (sys_flow*) |
 |----------------------|--------------------|----------------------|-------------------------|---------------------|---------------------|
@@ -66,7 +66,7 @@ xychart-beta
 - Reusable script includes across all applications
 - Easy integration with scoped apps and ATF for testing 
 
-#### Script Include and RestMessagev2
+### Script Include and RestMessagev2
 ```javascript
     initialize: function(restMessage, restMessageMethod, requestorId, entityProfile, midServer) {
         // Normalize restMessage to always be a sn_ws.RESTMessageV2 object
